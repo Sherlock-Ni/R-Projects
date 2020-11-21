@@ -1,0 +1,127 @@
+### chapter 3  scripts ###
+### tungbin, 2020 ###
+### part 1：some examples of financial data
+setwd("C:/Users/17621/Documents/R studio project/大数据课程/chapter3") # Set my working directory
+library(quantmod)
+#example 1, daily prices of Apple stock 
+getSymbols("AAPL",from="2007-01-03",to="2011-12-31") #Specify period
+AAPL.rtn=diff(log(AAPL$AAPL.Adjusted)) # Compute log returns
+AAPL.price = AAPL$AAPL.Adjusted # price series
+chartSeries(AAPL.price,theme="white")
+chartSeries(AAPL.rtn,theme="white")
+#example 2, daily YTM data of 10-year Treasury notes
+getSymbols("^TNX",from="2007-01-03",to="2011-12-31")
+TNX.yield=TNX$TNX.Adjusted # yield series
+TNX.rtn=diff(TNX$TNX.Adjusted) # Compute changes
+chartSeries(TNX.yield,theme="white")
+chartSeries(TNX.rtn,theme="white")
+#example 3, 
+getSymbols("DEXUSEU",src="FRED") #Obtain exchange rates from FRED
+head(DEXUSEU)
+tail(DEXUSEU)
+USEU.rtn=diff(log(DEXUSEU$DEXUSEU))
+chartSeries(DEXUSEU,theme="white")
+chartSeries(USEU.rtn,theme="white")
+
+### part 2 : normality test 
+library(fBasics) # Load package
+da=read.table("d-mmm-0111.txt",header=T) # Load data
+head(da) #Show the first 6 rows of data
+mmm=da[,2]  # Obtain 3m simple returns
+basicStats(mmm) #Compute summary statistics
+mean(mmm)
+var(mmm)
+stdev(mmm) # standard deviation
+t.test(mmm)  # Testing mean return = 0
+s3=skewness(mmm)
+T=length(mmm) # Sample size
+t3=s3/sqrt(6/T) # Skewness test
+pp=2*(1-pnorm(t3)) # Compute p-value
+s4=kurtosis(mmm)
+t4=s4/sqrt(24/T) # Kurtosis test
+normalTest(mmm,method='jb') # JB-test
+
+### part 3 : distribution of financial data 
+## example 1, return data of mmm corp.
+library(fBasics)
+da=read.table("d-mmm-0111.txt",header=T) # Load data
+mmm=da[,2] # Locate 3M simple returns
+hist(mmm,nclass=30) # Histogram
+d1=density(mmm)  # Obtain density estimate
+range(mmm)  # Range of 3M returns
+x=seq(-.1,.1,.001) # Create a sequence of x with increment 0.001.
+y1=dnorm(x,mean(mmm),stdev(mmm))
+plot(d1$x,d1$y,xlab='rtn',ylab='density',type='l')
+lines(x,y1,lty=2)
+
+## to plot the histogram, the fitted density and normal density in one figure
+library(fBasics)
+da=read.table("d-mmm-0111.txt",header=T) # Load data
+mmm=da[,2] # Locate 3M simple returns
+hist(mmm,nclass=30,freq=F,col="grey") # Histogram
+d1=density(mmm)  # Obtain density estimate
+range(mmm)  # Range of 3M returns
+x=seq(-.1,.1,.001) # Create a sequence of x with increment 0.001.
+y1=dnorm(x,mean(mmm),stdev(mmm))
+lines(d1$x,d1$y,lty=1,col="blue")
+lines(x,y1,lty=2,col="red")
+
+## example 2, return data of csi 300 index
+code = "000300.SH"
+da = read.csv(paste(code,"_ret.csv",sep=""),sep=',',header=TRUE)
+head(da)  #See the first 6 rows of the data
+csi300=da[,3]  # log return series
+d2=density(csi300)  # Obtain density estimate
+range(csi300)  # Range of csi 300 returns
+x=seq(-.1,.1,.001) # Create a sequence of x with increment 0.001.
+y2=dnorm(x,mean(csi300),stdev(csi300))
+# get the plot
+hist(csi300,nclass=30,freq=F,col="grey") # Histogram
+lines(d2$x,d2$y,lty=1,col="blue")
+lines(x,y2,lty=2,col="red")
+
+## example 3, ohlc plot and moving average plot
+library(quantmod)
+getSymbols("AAPL",from="2011-01-03",to="2011-06-30")
+X=AAPL[,1:4] # Locate open, high, low, and close prices
+xx=cbind(as.numeric(X[,1]),as.numeric(X[,2]),as.numeric(X[,3]),as.numeric(X[,4]))
+source("ohlc.R") # Compile the R script
+ohlc_plot(xx,xl="days",yl="price",title="Apple Stock")
+source("ma.R")  # Compile R script
+getSymbols("AAPL",from="2010-01-02",to="2011-12-08")
+x1=as.numeric(AAPL$AAPL.Close) # Locate close price
+ma(x1,21)
+
+
+### part 4 : comparison of two financial return series
+da=read.table("m-ibmsp-2611.txt",header=T)
+head(da)
+ibm=log(da$ibm+1) # Transform to log returns
+sp=log(da$sp+1)
+tdx=c(1:nrow(da))/12+1926 # Create time index
+par(mfcol=c(2,1))
+plot(tdx,ibm,xlab='year',ylab='lrtn',type='l')
+title(main='(a) IBM returns')
+plot(tdx,sp,xlab='year',ylab='lrtn',type='l') # X-axis first.
+title(main='(b) SP index')
+cor(ibm,sp)  # Obtain sample correlation
+m1=lm(ibm~sp)  # Fit the Market Model (linear model)
+summary(m1)
+plot(sp,ibm,cex=0.8)  # Obtain scatter plot
+abline(0.008,.807,col="red") # Add the linear regression line
+#
+da=read.table("m-ibmsp-2611.txt",header=T) #Load  data
+dim(da)
+ibm=log(da$ibm+1) # Compute log returns
+sp=log(da$sp+1)
+rt=cbind(ibm,sp) # Obtain bivariate returns
+m1=apply(rt,2,mean) # Obtain sample means
+v1=cov(rt) # Obtain sample covariance matrix
+corr = cor(rt) # obtain sample correlation matrix
+m1
+v1
+corr
+library(mnormt) # Load package
+x=rmnorm(1029,mean=m1,varcov=v1) # Simulation
+dim(x)
+plot(x[,2],x[,1],xlab='sim-sp',ylab='sim-ibm',cex=0.8,col="green") 

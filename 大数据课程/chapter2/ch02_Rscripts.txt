@@ -1,0 +1,99 @@
+### chapter 2  scripts ###
+### tungbin, 2020 ###
+### part 1：R intro and R studio intro
+# assign values
+aa <- 2
+aa = "bb"
+# variables
+aa = 3  # numberic
+class(aa) 
+bb = "names" 
+class(bb) # character
+lg = 2>3 
+class(lg) # logical
+# vectors
+va = c(1,3,5,8)
+va = 1:10
+va = seq(.1,1,0.1)
+va = seq(.1,1,length.out = 12)
+# matrix
+matrix(1:12,4,3)
+matrix(1,4,2)
+matrix(1:12,4,2)
+matrix(1:4,4,2)
+matrix(1:6,4,2) # warning
+# array
+aa = rnorm(20)
+array(aa,c(4,5))
+array(aa,c(2,2,5))
+# data.frame
+names = c("bob","alice","jason","jack","lily")
+males = c("M","F","M","M","F")
+math_grade = c(90,80,70,75,87)
+eng_grade = c(75,86,77,90,78)
+grade_tab = data.frame(names,males,math_grade,eng_grade)
+
+
+### part 2: install and load R packages
+### example 1, Quantmod package
+# install.packages(“Quantmod”)  # install the Quantmod package
+library(quantmod)   # Load the package
+getSymbols("AAPL")  # Download daily prices of Apple stock from Yahoo
+dim(AAPL)  # (dimension): See the size of the downloaded data.
+head(AAPL)  # See the first 6 rows of the data
+tail(AAPL)   # See the last 6 rows of the data 
+chartSeries(AAPL,theme="white")  # Plot the daily price and volume
+chartSeries(AAPL)#Not shown giving the same plot with black background.
+getSymbols("AAPL",from="2005-01-02", to="2010-12-31")
+head(AAPL)
+getSymbols("UNRATE",src="FRED")#Download unemployment rates from FRED.
+head(UNRATE,8) # See the first  8 rows of the data  
+tail(UNRATE,8) # See the last  8 rows of the data 
+chartSeries(UNRATE,theme="white")  # Plot monthly unemployment rates
+getSymbols("INTC",src="google")  # Download data from Google.
+head(INTC)
+getSymbols("^TNX") # Download CBOE 10-year Treasures Notes
+head(TNX)
+tail(TNX)  
+chartSeries(TNX,theme="white",TA=NULL) # Obtain plot without volume.
+
+### example 2, rugarch package
+# install.packages("rugarch")
+library(rugarch)
+library(quantmod)
+getSymbols("AAPL",from="2012-01-03",to="2020-9-15") #Specify period
+AAPL.rtn=diff(log(AAPL$AAPL.Adjusted)) # Compute log returns
+AAPL.close = AAPL$AAPL.Close
+chartSeries(AAPL.close,theme="white") # Get the plot of close price
+chartSeries(AAPL.rtn,theme="white") # Get the plot of log returns
+spec = ugarchspec(mean.model=list(armaOrder=c(0,0),
+include.mean=T),distribution.model="norm") # model specification
+aapl_ret = zoo(AAPL.rtn) # To get the zoo type data
+gfit_norm = ugarchfit(spec=spec,data=aapl_ret[2:2189])
+plot(gfit_norm) # Get the plots associated with the GARCH fitting
+
+
+### part 3: use read.table and read.csv to get data
+## 
+setwd("E:/1-工作/5-教学/2020秋/6-数据思维及应用/data and Rscripts/chapter2") # Set my working directory
+# install.packages("fBasics") # install package
+library(fBasics) # Load package
+da=read.table('d-ibm-0110.txt',header=T) # Load text data with names.
+## header=T means 1st row of the data file contains
+## variable names. The default is header=F, i.e., no names.
+head(da) # See the first 6 rows
+dim(da)  # Dimension of the data object "da".
+basicStats(da$return)
+da$logret = log(da$return+1) # Get the log returns
+write.csv(da, file = "ibm_return.csv")
+da <- read.csv("ibm_return.csv",header=T) # Load csv data with names.
+da = da[,-1]
+
+## part 4: load my own function
+setwd("E:/1-工作/5-教学/2020秋/6-数据思维及应用/data and Rscripts/chapter2") # Set my working directory
+source("normplot.R")
+normplot(1000,90,5)
+zdata = normplot(1000,90,5)
+
+
+

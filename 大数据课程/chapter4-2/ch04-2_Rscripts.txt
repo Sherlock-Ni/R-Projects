@@ -1,0 +1,154 @@
+### chapter 4  scripts ###
+### part 2, MA model and ARMA model
+### tungbin, 2020 ###
+
+# set work dir.
+setwd("E:/1-工作/5-教学/2020秋/6-数据思维及应用/data and Rscripts/chapter4-2")
+# identify orders of MA models
+# example 1, GNP data
+da=read.table("q-gnp4710.txt",header=T)
+head(da)
+G=da$VALUE
+gnp=diff(log(G))
+acf(gnp,lag=30,col="red",lwd=2,main="GNP")
+# idenfity a MA(3) model
+# example 2, log return of csi 300
+da = read.csv("000300.SH_ret.csv",sep=',',header=TRUE)
+csi300 = da[,3] # log returns 
+acf(csi300,lag=20,col="red",lwd=2,main="CSI 300")
+# idenfity a MA(4) model
+
+
+# estimation and prediction
+# example 1, GNP data
+da=read.table("q-gnp4710.txt",header=T)
+head(da)
+G=da$VALUE
+gnp=diff(log(G))
+m1=arima(gnp,order=c(0,0,3)) # unrestricted model
+m1
+Box.test(m1$residuals,lag=12,type='Ljung')  # model checking
+# tsdiag(m1,gof=20)
+par(mfcol=c(2,1))
+plot(m1$residuals,type="l",ylab="residuals")
+acf(m1$residuals,lag=20,col="red",lwd=2)
+# predict
+T2 = length(gnp)
+m1=arima(gnp[1:(T2-9)],order=c(0,0,3))
+ma_predict = predict(m1,9)
+# figure
+par(mfcol=c(1,1))
+plot((T2-16):T2,gnp[(T2-16):T2],type="l",ylim=c(-0.03,0.05),xlab="Time",ylab="s-return")
+lines(244:252,gnp[(T2-8):T2],type="b")
+lines(243:252,c(gnp[T2-9],ma_predict$pred),type="b",col="blue")
+lines(243:252,c(gnp[T2-9],ma_predict$pred+2*ma_predict$se),lty=2, col="red",type="b")
+lines(243:252,c(gnp[T2-9],ma_predict$pred-2*ma_predict$se),lty=2, col="green",type="b")
+
+
+# example 2, csi 300
+da = read.csv("000300.SH_ret.csv",sep=',',header=TRUE)
+csi300 = da[,3] # log returns
+m2=arima(csi300,order=c(0,0,4)) # unrestricted model
+m2
+Box.test(m2$residuals,lag=12,type='Ljung')  # model checking
+# tsdiag(m2,gof=20)
+par(mfcol=c(2,1))
+plot(m2$residuals,type="l",ylab="residuals")
+acf(m2$residuals,lag=20,col="red",lwd=2)
+
+# ma predict
+T2=length(csi300)
+predict_steps = 9
+m2=arima(csi300[1:(T2-predict_steps)],order=c(0,0,4))
+ma_predict = predict(m2,predict_steps)
+# figure
+par(mfcol=c(1,1))
+plot((T2-16):T2,csi300[(T2-16):T2],type="l",ylim=c(-0.05,0.05),xlab="Time",ylab="log-return")
+lines((T2-predict_steps+1):T2,csi300[(T2-predict_steps+1):T2],type="b")
+lines((T2-predict_steps):T2,c(csi300[T2-predict_steps],ma_predict$pred),type="b",col="blue")
+lines((T2-predict_steps):T2,c(csi300[T2-predict_steps],ma_predict$pred+2*ma_predict$se),lty=2, col="red",type="b")
+lines((T2-predict_steps):T2,c(csi300[T2-predict_steps],ma_predict$pred-2*ma_predict$se),lty=2, col="green",type="b")
+
+
+## part 3:arma model
+# example 1, gnp data
+da=read.table("q-gnp4710.txt",header=T)
+head(da)
+G=da$VALUE
+gnp=diff(log(G))
+par(mfcol=c(2,1))
+acf(gnp,lag=12,col="red")
+pacf(gnp,lag=12,col="red")
+aic_mat = matrix(NA,3,3)
+for(i in 1:3){
+  for(j in 1:3){
+    tmp = arima(gnp,order=c(i,0,j)) 
+    aic_mat[i,j]=tmp$aic
+  }
+}
+aic_mat
+# identifiy a ARMA(2,2) model
+# 估计和模型检验
+m4 = arima(gnp,order=c(2,0,2)) # 
+m4
+Box.test(m4$residuals,lag=12,type='Ljung')  # model checking
+# tsdiag(m4,gof=20)
+par(mfcol=c(2,1))
+plot(m4$residuals,type="l",ylab="residuals")
+acf(m4$residuals,lag=20,col="red",lwd=2,main="")
+
+# predict
+T2 = length(gnp)
+m4=arima(gnp[1:(T2-9)],order=c(2,0,2))
+arma_predict = predict(m4,9)
+# figure
+par(mfcol=c(1,1))
+plot((T2-16):T2,gnp[(T2-16):T2],type="l",ylim=c(-0.03,0.05),xlab="Time",ylab="s-return")
+lines(244:252,gnp[(T2-8):T2],type="b")
+lines(243:252,c(gnp[T2-9],arma_predict$pred),type="b",col="blue")
+lines(243:252,c(gnp[T2-9],arma_predict$pred+2*arma_predict$se),lty=2, col="red",type="b")
+lines(243:252,c(gnp[T2-9],arma_predict$pred-2*arma_predict$se),lty=2, col="green",type="b")
+
+
+# example 2, csi300 data
+da = read.csv("000300.SH_ret.csv",sep=',',header=TRUE)
+csi300 = da[,3] # log returns
+par(mfcol=c(2,1))
+acf(csi300,lag=12,col="red")
+pacf(csi300,lag=12,col="red")
+aic_mat = matrix(NA,6,4)
+for(i in 1:6){
+  for(j in 1:4){
+    tmp = arima(csi300,order=c(i,0,j)) 
+    aic_mat[i,j]=tmp$aic
+  }
+}
+aic_mat
+min(aic_mat)
+
+# identifiy a ARMA(4,4) model
+# 估计和模型检验
+m5 = arima(csi300,order=c(4,0,4)) # 
+m5
+Box.test(m5$residuals,lag=12,type='Ljung')  # model checking
+# tsdiag(m5,gof=20)
+par(mfcol=c(2,1))
+plot(m5$residuals,type="l",ylab="residuals")
+acf(m5$residuals,lag=20,col="red",lwd=2,main="")
+
+# arma predict
+T2=length(csi300)
+predict_steps = 9
+m5=arima(csi300[1:(T2-predict_steps)],order=c(4,0,4))
+arma_predict = predict(m5,predict_steps)
+# figure
+par(mfcol=c(1,1))
+plot((T2-16):T2,csi300[(T2-16):T2],type="l",ylim=c(-0.05,0.05),xlab="Time",ylab="log-return")
+lines((T2-predict_steps+1):T2,csi300[(T2-predict_steps+1):T2],type="b")
+lines((T2-predict_steps):T2,c(csi300[T2-predict_steps],arma_predict$pred),type="b",col="blue")
+lines((T2-predict_steps):T2,c(csi300[T2-predict_steps],arma_predict$pred+2*arma_predict$se),lty=2, col="red",type="b")
+lines((T2-predict_steps):T2,c(csi300[T2-predict_steps],arma_predict$pred-2*arma_predict$se),lty=2, col="green",type="b")
+
+
+
+
