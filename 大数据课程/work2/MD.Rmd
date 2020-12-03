@@ -1,0 +1,258 @@
+---
+title: "大数据思维作业2"
+author: "金融八班   倪晨豪   181910839"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+library(quantmod)
+library(rugarch)
+library(fBasics)
+source("backtest.R")
+getSymbols("CPHI", from = "2015-01-01", to = "2020-12-02")
+setSymbolLookup(VANKE=list(name='000002.sz',from = "2015-01-01", to = "2020-12-02",src='yahoo'))
+getSymbols("VANKE")
+CPHI.price <- CPHI$CPHI.Adjusted
+VANKE.price <- VANKE$'000002.SZ.Adjusted'
+CPHI.rtn <- na.omit(diff(log(CPHI$CPHI.Adjusted)))
+VANKE.rtn <- na.omit(diff(log(VANKE$'000002.SZ.Adjusted')))
+CPHI.tdx <- c(1:1490)/252 + 2015
+VANKE.tdx <- c(1:1438)/252 + 2015
+CPHI.adjtdx <- c(2:1490)/252 + 2015
+VANKE.adjtdx <- c(2:1438)/252 + 2015
+```
+
+### 一、前言
+
+    本文选取了中国医药与万科的从2015年1月1日起到2020年12月1日的每日股价为主要数据来源。对中国医药与万科的对数收益率分别进行时间序列建模以及模型检验，选出各自的最优模型并进行比较。
+
+### 二、中国医药和万科股票的概述
+
+```{r}
+opar <- par(no.readonly = TRUE)
+par(mfcol = c(2,1))
+plot(CPHI.tdx, CPHI.price, xlab = "Year", ylab = "Price", type = 'l', main = "The price of CPHI from 2015 to 2020")
+plot(VANKE.tdx, VANKE.price, xlab = "Year", ylab = "Price", type = 'l', main = "The price of VANKE from 2015 to 2020")
+par(opar)
+```
+
+```{r}
+opar <- par(no.readonly = TRUE)
+par(mfcol = c(2,1))
+plot(CPHI.tdx, log(CPHI.price), xlab = "Year", ylab = "Log Price", type = 'l', main = "The log price of CPHI from 2015 to 2020")
+plot(VANKE.tdx, log(VANKE.price), xlab = "Year", ylab = "Log Price", type = 'l', main = "The log price of VANKE from 2015 to 2020")
+par(opar)
+```
+
+```{r}
+opar <- par(no.readonly = TRUE)
+par(mfcol = c(2,1))
+plot(CPHI.adjtdx, CPHI.rtn, xlab = "Year", ylab = "Log Return", type = 'l', main = "The log return of CPHI from 2015 to 2020")
+plot(VANKE.adjtdx, VANKE.rtn, xlab = "Year", ylab = "Log Return", type = 'l', main = "The log return of VANKE from 2015 to 2020")
+par(opar)
+```
+## （一）中国医药股票概述
+
+    从中国国药的股价来看可见，在2020年前始终处在较为稳定的位置，实现较低的平均收益率；但是在2020年后股价大幅度上涨，实现了高收益率。可见在疫情期间，医药行业确实实现了短期的崛起，同时也反映出抗疫的重要性。
+    可见2020年前的收益率较为稳定，基本在平均值附近浮动，但是在2020年后的较短时间内收益率出现了较大幅度的波动，出现了极端值从而使得收益率的分布产生了肥尾。
+    
+## （二）万科股票概述
+
+    从万科的股价来看，在2018年7月前万科的股价处于大幅度下跌的状态，在2020年1月后经历了两次短期的大幅度下降。从股价上可见疫情对房地产行业带来了一定的冲击，导致股价受挫；此外，前期的万科股价下跌对疫情期间的股价也会产生一定的影响，在对抗风险以及资金充足率上可能准备不足，无法应对系统性风险。
+    万科收益率的整体波动幅度较大，标准差达到了0.022，但是极端值出现的概率较小，大部分的波动较为稳定。
+    
+### 三、中国医药的时间序列模型分析
+
+## （一）模型选择
+    
+    首先，对中国医药股票的对数收益率画出ACF以及PACF图并进行定阶，求出AR模型以及MA模型的AIC值；再通过迭代法求出ARMA最优阶数，对三者的AIC值比较并选择中国医药对数收益率的最优时间序列模型。
+    
+```{r}
+acf1 <- acf(CPHI.rtn, lag = 20, col = "red", main = "Series CPHI")
+pacf1 <- pacf(CPHI.rtn, lag = 20, col = "red", main = "Series CPHI")
+```
+
+```{r message=FALSE, warning=FALSE}
+aic_mat = matrix(NA, 5, 5)
+for(i in 1:5){
+  for(j in 1:5){
+    tmp = arima(CPHI.rtn,order = c(i,0,j))
+    aic_mat[i,j] = tmp$aic
+  }
+}
+aic_mat
+```
+
+```{r include=FALSE,message=FALSE, warning=FALSE}
+# AR(4) model
+m1 <- arima(CPHI.rtn, order = c(4,0,0))
+m1
+tsdiag(m1, gof = 20)
+t.test(CPHI.rtn)
+mm1 <- arima(CPHI.rtn,order = c(4,0,0), include.mean = F)
+mm1
+
+# MA(4) model
+m2 <- arima(CPHI.rtn, order = c(0,0,4))
+m2
+tsdiag(m2, gof = 20)
+t.test(CPHI.rtn)
+mm2 <- arima(CPHI.rtn, order = c(0,0,4), include.mean = F)
+mm2
+
+# ARMA(1,1) model
+m3 <- arima(CPHI.rtn, order = c(1,0,1), include.mean = F)
+m3
+tsdiag(m3, gof = 20)
+m4 <- arima(CPHI.rtn, order = c(5,0,5))
+m4
+tsdiag(m4)
+mm4 <- arima(CPHI.rtn, order = c(5,0,5), include.mean = F)
+mm4
+```
+
+
+```{r}
+CPHI_aic = c(Model = "AIC", AR = mm1$aic, MA = mm2$aic, ARMA = mm4$aic)
+pander:: pander(CPHI_aic)
+tsdiag(mm4)
+```
+    
+    由上述可知，由ACF以及PACF图像分别对AR以及MA模型定阶为4阶，同时ARMA(4,4)为迭代所得ARMA模型中的最优模型；分别比较AR(4)、MA(4)以及ARMA(5,5)的AIC值可得，ARMA(5,5)为中国医药股票对数收益率的最优时间序列模型。
+
+## （二）中国医药的模型样本外预测
+
+```{r include=FALSE,message=FALSE, warning=FALSE}
+pm1=backtest(mm1,CPHI.rtn,745,1,inc.mean=F)
+pm2=backtest(mm2,CPHI.rtn,745,1,inc.mean=F)
+pm3=backtest(m3,CPHI.rtn,745,1,inc.mean=F)
+pm4=backtest(mm4,CPHI.rtn,745,1,inc.mean=F)
+```
+
+
+```{r message=FALSE, warning=FALSE}
+
+Model1 <- c("AR(4)","MA(4)","ARMA(1,1)","ARMA(5,5)")
+aic1 <- c(mm1$aic,mm2$aic,m3$aic,mm4$aic)
+rmse1 <- c(pm1$rmse,pm2$rmse,pm3$rmse,pm4$rmse)
+mabso1 <- c(pm1$mabso,pm2$mabso,pm3$mabso,pm4$mabso)
+perform_tab_CPHI <- data.frame(Model,"AIC" = aic1, "RMSFE" = rmse1, "MAFE" = mabso1)
+pander:: pander(perform_tab_CPHI)
+```
+
+```{r}
+pm4fit <- CPHI.rtn[746:1489]-pm4$error
+plot(CPHI.adjtdx[746:1489],CPHI.rtn[746:1489],xlab='year',ylab='log return',type='l')
+points(CPHI.adjtdx[746:1489],pm4fit,pch='*')
+```
+
+    由上述的图表所示，ARMA(5,5)模型的AIC值最小，AR模型的RMSFE最小，ARMA(1,1)的MAFE最小；由于ARMA(1,1)与AR模型的MAFE非常接近，因此认为AR模型的MAFE也为最小；所以AR模型的表现较好。综上可得，越简单的模型样本外数据表现可能越好。
+
+### 万科的时间序列模型分析
+
+## （一）模型选择
+
+    首先，对万科股票的对数收益率画出ACF以及PACF图并进行定阶，求出AR模型以及MA模型的AIC值；再通过迭代法求出ARMA最优阶数，对三者的AIC值比较并选择中国医药对数收益率的最优时间序列模型。
+    
+```{r}
+acf2 <- acf(VANKE.rtn, lag = 20, col = "red", main = "Series VANKE")
+pacf2 <- pacf(VANKE.rtn, lag = 20, col = "red", main = "Series VANKE")
+```
+
+```{r message=FALSE, warning=FALSE}
+aic_mat = matrix(NA, 5, 5)
+for(i in 1:5){
+  for(j in 1:5){
+    tmp = arima(VANKE.rtn,order = c(i,0,j))
+    aic_mat[i,j] = tmp$aic
+  }
+}
+aic_mat
+```
+
+```{r include=FALSE,message=FALSE, warning=FALSE}
+m5 <- arima(VANKE.rtn, order = c(2,0,0))
+m5
+tsdiag(m5, gof = 20)
+t.test(VANKE.rtn)
+mm5 <- arima(VANKE.rtn, order = c(2,0,0), include.mean = F)
+mm5
+
+# MA(2) model
+m6 <- arima(VANKE.rtn, order = c(0,0,2))
+m6
+tsdiag(m6, lag = 20)
+t.test(VANKE.rtn)
+mm6 <- arima(VANKE.rtn, order = c(0,0,2), include.mean = F)
+mm6
+
+# ARMA(1,1) model
+m7 <- arima(VANKE.rtn, order = c(1,0,1), include.mean = F)
+m7
+tsdiag(m7,lag = 20)
+
+m8 <- arima(VANKE.rtn, order = c(2,0,3))
+m8
+tsdiag(m8, lag = 20)
+mm8 <- arima(VANKE.rtn, order = c(2,0,3), include.mean = F, fixed = c(NA,NA,0,NA,NA))
+mm8
+```
+
+
+```{r}
+VANKE_aic <- c(Model = "AIC", AR = mm5$aic, MA = mm6$aic, ARMA = mm8$aic)
+pander:: pander(VANKE_aic)
+```
+
+    由上述可知，由ACF以及PACF图像分别对AR以及MA模型定阶为2阶，同时ARMA(2,3)为迭代所得ARMA模型中的最优模型；分别比较AR(2)、MA(2)以及ARMA(2,3)的AIC值可得，ARMA(2,3)为万科股票对数收益率的最优时间序列模型。
+
+## （二）万科的模型样本外预测
+
+```{r include=FALSE,message=FALSE, warning=FALSE}
+pm5=backtest(mm5,VANKE.rtn,719,1,inc.mean=F)
+pm6=backtest(mm6,VANKE.rtn,719,1,inc.mean=F)
+pm7=backtest(m7,VANKE.rtn,719,1,inc.mean=F)
+pm8=backtest(mm8,VANKE.rtn,719,1,fixed = c(NA,NA,0,NA,NA), inc.mean=F)
+```
+
+```{r message=FALSE, warning=FALSE}
+
+Model2 <- c("AR(2)","MA(2)","ARMA(1,1)","ARMA(2,3)")
+aic2 <- c(mm5$aic,mm6$aic,m7$aic,mm8$aic)
+rmse2 <- c(pm5$rmse,pm6$rmse,pm7$rmse,pm8$rmse)
+mabso2 <- c(pm5$mabso,pm6$mabso,pm7$mabso,pm8$mabso)
+perform_tab_VANKE <- data.frame(Model2,AIC = aic2,RMSFE = rmse2,MAFE = mabso2)
+pander:: pander(perform_tab_VANKE)
+```
+
+```{r}
+pm8fit=VANKE.rtn[720:1437]-pm8$error
+plot(VANKE.adjtdx[720:1437],VANKE.rtn[720:1437],xlab='year',ylab='log return',type='l')
+points(VANKE.adjtdx[720:1437],pm8fit,pch='*')
+```
+
+    如上述的图表所示，ARMA(1,1)模型的AIC值最小，ARMA(1,1)模型的RMSFE最小，ARMA(2,3)的MAFE最小；ARMA(1,1)的AIC与RMSFE都为最小，同时各模型之间平均绝对误差相差较小；因此，ARMA(1,1)模型表现较好。综上所述，越简单的模型样本外数据表现可能越好。
+
+### 四、结论
+
+```{r}
+Stock <- c("CPHI", '.', '.', '.',"VANKE", '.', '.', '.')
+Model3 <- c("AR(4)","MA(4)","ARMA(1,1)","ARMA(5,5)","AR(2)","MA(2)","ARMA(1,1)","ARMA(2,3)")
+aic3 <- c(mm1$aic,mm2$aic,m3$aic,mm4$aic,mm5$aic,mm6$aic,m7$aic,mm8$aic)
+rmse3 <- c(pm1$rmse,pm2$rmse,pm3$rmse,pm4$rmse,pm5$rmse,pm6$rmse,pm7$rmse,pm8$rmse)
+mabso3 <- c(pm1$mabso,pm2$mabso,pm3$mabso,pm4$mabso,pm5$mabso,pm6$mabso,pm7$mabso,pm8$mabso)
+perform_tab <- data.frame(Stock,Model = Model3,AIC = aic3,RMSFE = rmse3,MAFE = mabso3)
+pander::pander(perform_tab)
+```
+
+    通过AIC准则、RMSFE以及MAFE比较上述两个股票的八个模型的表现可得，万科的模型表现更好，同时越简单的模型样本外表现越好。
+
+
+
+
+

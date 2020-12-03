@@ -1,0 +1,175 @@
+### chapter 5  scripts ###
+### part 1, applications of linear autoregression and moving average models
+### tungbin, 2020 ###
+
+##  weekly petroleum prices and crude oil prices
+setwd("C:/Users/17621/Documents/R studio project/大数据课程/chapter5")
+da=read.table("w-petroprice.txt",header=T)
+da1=read.table("w-gasoline.txt")
+pgs=log(da1[,1])
+pus=log(da$US)
+tdx=c(1:717)/52+1997  # calendar time
+# price
+par(mfcol=c(2,1))
+plot(tdx,da1[,1],xlab='year',ylab='price',type='l')
+title(main='(a) Gasoline')
+plot(tdx,da$US,xlab='year',ylab='price',type='l')
+title(main='(b) Crude oil')
+# log prices
+par(mfcol=c(2,1))
+plot(tdx,pgs,xlab='year',ylab='ln(price)',type='l')
+title(main='(a) Gasoline')
+plot(tdx,pus,xlab='year',ylab='ln(price)',type='l')
+title(main='(b) Crude oil')
+# log returns
+dpgs= diff(pgs)
+dpus= diff(pus)
+par(mfcol=c(2,1))
+plot(tdx[2:717],dpgs,xlab='year',ylab='log return',type='l')
+title(main='(a) Gasoline')
+plot(tdx[2:717],dpus,xlab='year',ylab='log return',type='l')
+title(main='(b) Crude oil')
+
+## part1, gasoline prices 
+acf(dpgs,lag=20,col="red",main="dpgs")
+pacf(dpgs,lag=20,col="red",main="dpgs")
+
+#ar(5) model
+m1 = arima(dpgs,order=c(5,0,0))
+m1
+tsdiag(m1,gof=20)
+# t test
+t.test(dpgs)
+mm1 = arima(dpgs,order=c(5,0,0),include.mean=F, fixed = c(NA,NA,NA,0,NA))
+mm1
+tsdiag(mm1,gof=20)
+
+#ma(4) model
+m2 = arima(dpgs,order=c(0,0,4))
+m2
+tsdiag(m2,gof=20)
+mm2 = arima(dpgs,order=c(0,0,4),include.mean=F)
+mm2
+
+#arma(1,1) model
+m3 = arima(dpgs,order=c(1,0,1),include.mean = F)
+m3
+tsdiag(m3,gof=20)
+
+## choose optimal orders using aic
+aic_mat = matrix(NA,5,5)
+for(i in 1:5){
+  for(j in 1:5){
+    tmp = arima(dpgs,order=c(i,0,j)) 
+    aic_mat[i,j]=tmp$aic
+  }
+}
+aic_mat
+min(aic_mat)
+which(aic_mat==min(aic_mat),arr.ind = T)
+
+m4=arima(dpgs,order=c(3,0,5),include.mean=F)
+m4
+mm4=arima(dpgs,order=c(3,0,5),include.mean=F,fixed=c(NA,NA,NA,NA,NA,NA,0,NA))
+mm4
+
+tsdiag(m4,gof=20)
+tsdiag(mm4,gof=20)
+
+# cmparison of out-of-sample prediction 
+source("backtest.R")
+c1=c(NA,NA,NA,0,NA)
+pm1=backtest(mm1,dpgs,316,1,fixed=c1,inc.mean=F)
+c2=c(NA,NA,NA,NA)
+pm2=backtest(mm2,dpgs,316,1,fixed=c2,inc.mean=F)
+
+c3=c(NA,NA)
+pm3=backtest(m3,dpgs,316,1,fixed=c3,inc.mean=F)
+c4=c(NA,NA,NA,NA,NA,NA,0,NA)
+pm4=backtest(mm4,dpgs,316,1,fixed=c4,inc.mean=F)
+
+aic = c(mm1$aic,mm2$aic,m3$aic,mm4$aic)
+rmse = c(pm1$rmse,pm2$rmse,pm3$rmse,pm4$rmse)
+mabso = c(pm1$mabso,pm2$mabso,pm3$mabso,pm4$mabso)
+perform_tab = data.frame(aic,rmse,mabso)
+write.csv(perform_tab,"outofsample_perform.csv")
+
+#plot the figure
+pm3fit=dpgs[317:716]-pm3$error
+pm4fit=dpgs[317:716]-pm4$error
+plot(tdx[317:716],dpgs[317:716],xlab='year',ylab='log return',type='l')
+points(tdx[317:716],pm3fit,pch='*')
+plot(tdx[317:716],dpgs[317:716],xlab='year',ylab='log return',type='l')
+points(tdx[317:716],pm4fit,pch='*')
+
+# part 2, considering crude oil price 
+dpus=diff(pus)
+tmpmodel=lm(dpgs~-1+dpus)
+summary(tmpmodel)
+acf(tmpmodel$residuals,lag=20,col="red")
+pacf(tmpmodel$residuals,lag=20,col="red")
+
+#ar(5) model
+oil_m1 = arima(dpgs,order=c(5,0,0),include.mean=F,xreg=dpus)
+oil_m1
+tsdiag(oil_m1,gof=20)
+#delete ar(4)
+oil_mm1 = arima(dpgs,order=c(5,0,0),include.mean=F, xreg=dpus,fixed = c(NA,NA,NA,0,NA,NA))
+oil_mm1
+tsdiag(oil_mm1,gof=20)
+
+#ma(4) model
+oil_m2 = arima(dpgs,order=c(0,0,4),xreg=dpus)
+oil_m2
+tsdiag(oil_m2,gof=20)
+oil_mm2 = arima(dpgs,order=c(0,0,4),include.mean=F,xreg=dpus)
+oil_mm2
+
+#arma(1,1) model
+oil_m3 = arima(dpgs,order=c(1,0,1),include.mean = F,xreg=dpus)
+oil_m3
+tsdiag(oil_m3,gof=20)
+
+## choose optimal orders using aic
+aic_mat = matrix(NA,5,5)
+for(i in 1:5){
+  for(j in 1:5){
+    tmp = arima(dpgs,order=c(i,0,j),include.mean=F,xreg=dpus) 
+    aic_mat[i,j]=tmp$aic
+  }
+}
+
+which(aic_mat==min(aic_mat),arr.ind = T)
+
+oil_m4=arima(dpgs,order=c(5,0,2),include.mean=F,xreg=dpus)
+oil_m4
+oil_mm4=arima(dpgs,order=c(5,0,2),include.mean=F,xreg=dpus,fixed=c(NA,NA,NA,NA,NA,0,NA,NA))
+oil_mm4
+
+tsdiag(oil_m4,gof=20)
+tsdiag(oil_mm4,gof=20)
+
+# cmparison of out-of-sample prediction 
+source("backtest.R")
+c1=c(NA,NA,NA,0,NA,NA)
+oil_pm1=backtest(oil_mm1,dpgs,316,1,fixed=c1,inc.mean=F,xre=dpus)
+oil_pm2=backtest(oil_mm2,dpgs,316,1,inc.mean=F,xre=dpus)
+
+oil_pm3=backtest(oil_m3,dpgs,316,1,inc.mean=F,xre=dpus)
+c4=c(NA,NA,NA,NA,NA,0,NA,NA)
+oil_pm4=backtest(oil_mm4,dpgs,316,1,fixed=c4,inc.mean=F,xre=dpus)
+
+# perform tab
+oil_aic = c(oil_mm1$aic,oil_mm2$aic,oil_m3$aic,oil_mm4$aic)
+oil_rmse = c(oil_pm1$rmse,oil_pm2$rmse,oil_pm3$rmse,oil_pm4$rmse)
+oil_mabso = c(oil_pm1$mabso,oil_pm2$mabso,oil_pm3$mabso,oil_pm4$mabso)
+oil_perform_tab = data.frame(oil_aic,oil_rmse,oil_mabso)
+write.csv(oil_perform_tab,"oil_outofsample_perform.csv")
+
+#plot the figure
+oil_pm3fit=dpgs[317:716]-oil_pm3$error
+oil_pm4fit=dpgs[317:716]-oil_pm4$error
+plot(tdx[317:716],dpgs[317:716],xlab='year',ylab='log return',type='l')
+points(tdx[317:716],oil_pm3fit,pch='*')
+plot(tdx[317:716],dpgs[317:716],xlab='year',ylab='log return',type='l')
+points(tdx[317:716],oil_pm4fit,pch='*')
