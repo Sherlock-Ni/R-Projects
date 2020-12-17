@@ -1,0 +1,34 @@
+
+<table style="text-align:center"><caption><strong>金融知识、风险厌恶水平对家庭资产选择的影响</strong></caption>
+<tr><td colspan="5" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"></td><td colspan="4"><em>Dependent variable:</em></td></tr>
+<tr><td></td><td colspan="4" style="border-bottom: 1px solid black"></td></tr>
+<tr><td style="text-align:left"></td><td colspan="2">股票资产占比</td><td colspan="2">风险资产占比</td></tr>
+<tr><td style="text-align:left"></td><td><em>Tobit</em></td><td><em>instrumental</em></td><td><em>Tobit</em></td><td><em>instrumental</em></td></tr>
+<tr><td style="text-align:left"></td><td><em></em></td><td><em>variable</em></td><td><em></em></td><td><em>variable</em></td></tr>
+<tr><td style="text-align:left"></td><td>(1)</td><td>(2)</td><td>(3)</td><td>(4)</td></tr>
+<tr><td colspan="5" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">风险厌恶水平</td><td>-0.144<sup>***</sup></td><td>-0.020<sup>***</sup></td><td>-0.117<sup>***</sup></td><td>-0.043<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.029)</td><td>(0.006)</td><td>(0.016)</td><td>(0.006)</td></tr>
+<tr><td style="text-align:left">金融知识</td><td>0.192<sup>***</sup></td><td>0.046<sup>***</sup></td><td>0.149<sup>***</sup></td><td>0.065<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.046)</td><td>(0.011)</td><td>(0.025)</td><td>(0.012)</td></tr>
+<tr><td style="text-align:left">性别</td><td>0.023</td><td>0.005</td><td>0.083<sup>**</sup></td><td>0.024<sup>*</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.065)</td><td>(0.012)</td><td>(0.035)</td><td>(0.014)</td></tr>
+<tr><td style="text-align:left">是否工作</td><td>0.177<sup>***</sup></td><td>0.029<sup>**</sup></td><td>-0.083<sup>**</sup></td><td>-0.041<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.068)</td><td>(0.013)</td><td>(0.037)</td><td>(0.014)</td></tr>
+<tr><td style="text-align:left">教育水平</td><td>0.151<sup>***</sup></td><td>0.020<sup>***</sup></td><td>0.127<sup>***</sup></td><td>0.048<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.022)</td><td>(0.004)</td><td>(0.012)</td><td>(0.005)</td></tr>
+<tr><td style="text-align:left">婚姻状况</td><td>0.064<sup>**</sup></td><td>0.012<sup>**</sup></td><td>-0.025</td><td>-0.007</td></tr>
+<tr><td style="text-align:left"></td><td>(0.031)</td><td>(0.006)</td><td>(0.018)</td><td>(0.006)</td></tr>
+<tr><td style="text-align:left">经管类专业学习经历</td><td>-0.070</td><td>-0.018</td><td>0.061</td><td>0.014</td></tr>
+<tr><td style="text-align:left"></td><td>(0.083)</td><td>(0.018)</td><td>(0.048)</td><td>(0.020)</td></tr>
+<tr><td style="text-align:left">有房</td><td>0.186<sup>***</sup></td><td>0.030<sup>**</sup></td><td>-0.055</td><td>-0.074<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.066)</td><td>(0.012)</td><td>(0.036)</td><td>(0.014)</td></tr>
+<tr><td style="text-align:left">有小孩</td><td>0.221<sup>***</sup></td><td>0.041<sup>**</sup></td><td>0.131<sup>***</sup></td><td>0.061<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.077)</td><td>(0.017)</td><td>(0.044)</td><td>(0.019)</td></tr>
+<tr><td style="text-align:left">常数项</td><td>-1.500<sup>***</sup></td><td>0.035</td><td>-0.419<sup>***</sup></td><td>0.193<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.193)</td><td>(0.035)</td><td>(0.099)</td><td>(0.039)</td></tr>
+<tr><td colspan="5" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">Observations</td><td>2,097</td><td>2,097</td><td>2,097</td><td>2,097</td></tr>
+<tr><td style="text-align:left">R<sup>2</sup></td><td></td><td>0.080</td><td></td><td>0.235</td></tr>
+<tr><td style="text-align:left">Adjusted R<sup>2</sup></td><td></td><td>0.076</td><td></td><td>0.232</td></tr>
+<tr><td style="text-align:left">Wald Test (df = 9)</td><td>183.741<sup>***</sup></td><td></td><td>481.147<sup>***</sup></td><td></td></tr>
+<tr><td colspan="5" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"><em>Note:</em></td><td colspan="4" style="text-align:right"><sup>*</sup>p<0.1; <sup>**</sup>p<0.05; <sup>***</sup>p<0.01</td></tr>
+</table>

@@ -1,0 +1,19 @@
+
+<table style="text-align:center"><caption><strong>描述性统计</strong></caption>
+<tr><td colspan="8" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">Statistic</td><td>N</td><td>Mean</td><td>St. Dev.</td><td>Min</td><td>Pctl(25)</td><td>Pctl(75)</td><td>Max</td></tr>
+<tr><td colspan="8" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">风险厌恶水平</td><td>2,097</td><td>3.128</td><td>1.237</td><td>0</td><td>2</td><td>4</td><td>5</td></tr>
+<tr><td style="text-align:left">金融知识</td><td>2,097</td><td>0.977</td><td>0.823</td><td>0</td><td>0</td><td>2</td><td>2</td></tr>
+<tr><td style="text-align:left">参与股票市场</td><td>2,097</td><td>0.184</td><td>0.387</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+<tr><td style="text-align:left">参与金融市场</td><td>2,097</td><td>0.251</td><td>0.354</td><td>0.000</td><td>0.000</td><td>0.500</td><td>1.000</td></tr>
+<tr><td style="text-align:left">股票资产占比</td><td>2,097</td><td>0.124</td><td>0.292</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+<tr><td style="text-align:left">金融资产占比</td><td>2,097</td><td>0.423</td><td>0.494</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+<tr><td style="text-align:left">性别</td><td>2,097</td><td>0.511</td><td>0.500</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+<tr><td style="text-align:left">教育水平</td><td>2,097</td><td>3.320</td><td>1.941</td><td>0</td><td>2</td><td>5</td><td>8</td></tr>
+<tr><td style="text-align:left">婚姻状况</td><td>2,097</td><td>1.167</td><td>1.103</td><td>0</td><td>1</td><td>1</td><td>5</td></tr>
+<tr><td style="text-align:left">有小孩</td><td>2,097</td><td>0.187</td><td>0.390</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+<tr><td style="text-align:left">经管类专业学习经历</td><td>2,097</td><td>0.844</td><td>0.363</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td style="text-align:left">有房</td><td>2,097</td><td>0.512</td><td>0.500</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+<tr><td style="text-align:left">有工作</td><td>2,097</td><td>0.477</td><td>0.500</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+<tr><td style="text-align:left">利率问题</td><td>2,097</td><td>0.399</td><td>0.490</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+<tr><td style="text-align:left">通货膨胀问题</td><td>2,097</td><td>0.578</td><td>0.494</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+<tr><td colspan="8" style="border-bottom: 1px solid black"></td></tr></table>

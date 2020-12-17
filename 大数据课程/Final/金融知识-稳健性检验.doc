@@ -1,0 +1,33 @@
+
+<table style="text-align:center"><caption><strong>金融知识对参与金融市场与家庭资产选择的影响：稳健性检验</strong></caption>
+<tr><td colspan="5" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"></td><td colspan="4"><em>Dependent variable:</em></td></tr>
+<tr><td></td><td colspan="4" style="border-bottom: 1px solid black"></td></tr>
+<tr><td style="text-align:left"></td><td>参与股票市场</td><td>参与金融市场</td><td>股票资产占比</td><td>风险资产占比</td></tr>
+<tr><td style="text-align:left"></td><td><em>probit</em></td><td><em>probit</em></td><td><em>Tobit</em></td><td><em>Tobit</em></td></tr>
+<tr><td style="text-align:left"></td><td>(1)</td><td>(2)</td><td>(3)</td><td>(4)</td></tr>
+<tr><td colspan="5" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">利率问题</td><td>0.010</td><td>0.074</td><td>-0.018</td><td>0.057</td></tr>
+<tr><td style="text-align:left"></td><td>(0.076)</td><td>(0.068)</td><td>(0.070)</td><td>(0.048)</td></tr>
+<tr><td style="text-align:left">通货膨胀问题</td><td>0.475<sup>***</sup></td><td>0.507<sup>***</sup></td><td>0.455<sup>***</sup></td><td>0.413<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.089)</td><td>(0.071)</td><td>(0.084)</td><td>(0.053)</td></tr>
+<tr><td style="text-align:left">风险厌恶水平</td><td>-0.161<sup>***</sup></td><td>-0.204<sup>***</sup></td><td>-0.140<sup>***</sup></td><td>-0.151<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.030)</td><td>(0.027)</td><td>(0.029)</td><td>(0.019)</td></tr>
+<tr><td style="text-align:left">性别</td><td>-0.009</td><td>0.177<sup>***</sup></td><td>0.017</td><td>0.131<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.071)</td><td>(0.062)</td><td>(0.064)</td><td>(0.044)</td></tr>
+<tr><td style="text-align:left">是否工作</td><td>0.165<sup>**</sup></td><td>-0.043</td><td>0.192<sup>***</sup></td><td>-0.021</td></tr>
+<tr><td style="text-align:left"></td><td>(0.074)</td><td>(0.064)</td><td>(0.068)</td><td>(0.045)</td></tr>
+<tr><td style="text-align:left">教育水平</td><td>0.164<sup>***</sup></td><td>0.196<sup>***</sup></td><td>0.147<sup>***</sup></td><td>0.144<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.023)</td><td>(0.020)</td><td>(0.022)</td><td>(0.015)</td></tr>
+<tr><td style="text-align:left">婚姻状况</td><td>0.069<sup>**</sup></td><td>-0.016</td><td>0.069<sup>**</sup></td><td>-0.015</td></tr>
+<tr><td style="text-align:left"></td><td>(0.034)</td><td>(0.030)</td><td>(0.031)</td><td>(0.022)</td></tr>
+<tr><td style="text-align:left">经管类专业学习经历</td><td>-0.126</td><td>0.035</td><td>-0.068</td><td>0.049</td></tr>
+<tr><td style="text-align:left"></td><td>(0.091)</td><td>(0.090)</td><td>(0.083)</td><td>(0.060)</td></tr>
+<tr><td style="text-align:left">有房</td><td>0.223<sup>***</sup></td><td>0.241<sup>***</sup></td><td>0.177<sup>***</sup></td><td>0.158<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.071)</td><td>(0.062)</td><td>(0.066)</td><td>(0.044)</td></tr>
+<tr><td style="text-align:left">有小孩</td><td>0.280<sup>***</sup></td><td>0.195<sup>**</sup></td><td>0.219<sup>***</sup></td><td>0.126<sup>**</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.084)</td><td>(0.082)</td><td>(0.076)</td><td>(0.055)</td></tr>
+<tr><td style="text-align:left">常数项</td><td>-1.620<sup>***</sup></td><td>-0.821<sup>***</sup></td><td>-1.578<sup>***</sup></td><td>-0.513<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.192)</td><td>(0.171)</td><td>(0.195)</td><td>(0.123)</td></tr>
+<tr><td colspan="5" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">Observations</td><td>2,097</td><td>2,097</td><td>2,097</td><td>2,097</td></tr>
+<tr><td style="text-align:left">Wald Test (df = 10)</td><td></td><td></td><td>187.479<sup>***</sup></td><td>542.808<sup>***</sup></td></tr>
+<tr><td colspan="5" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"><em>Note:</em></td><td colspan="4" style="text-align:right"><sup>*</sup>p<0.1; <sup>**</sup>p<0.05; <sup>***</sup>p<0.01</td></tr>
+</table>

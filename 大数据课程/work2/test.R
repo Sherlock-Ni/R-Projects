@@ -2,6 +2,7 @@
 library(quantmod)
 library(rugarch)
 library(fBasics)
+library(ggplot2)
 
 ### Get Data and Plot price, log price and log return==========================
 getSymbols("CPHI", from = "2015-01-01", to = "2020-12-02")
