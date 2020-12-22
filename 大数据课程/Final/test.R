@@ -40,7 +40,7 @@ probit_stock_sim <- glm(df$stock~df$`The level of risk reverse`+df$`The conditio
 
 probit_stock <- glm(df$stock~df$`The level of risk reverse`+df$`The condition of the answer of financial problems`+
             df$gender+df$work+df$`education level`+df$`marital status`+df$`experience of finance`+
-              df$`real estate`+ df$`educational investment`,data = df,family = binomial(link = "probit"))
+            df$`real estate`+ df$`educational investment`,data = df,family = binomial(link = "probit"))
 
 
 probit_market_sim <- glm(df$`financial market`~df$`The level of risk reverse`+df$`The condition of the answer of financial problems`,

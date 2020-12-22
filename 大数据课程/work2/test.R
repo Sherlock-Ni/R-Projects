@@ -169,3 +169,17 @@ points(VANKE.adjtdx[720:1437],pm8fit,pch='*')
 
 write.csv(CPHI, file = "CPHI.csv")
 write.csv(VANKE, file = "VANKE.csv")
+
+
+
+
+T2=length(VANKE.rtn)
+predict_steps = 9
+m9=arima(VANKE.rtn[1:(T2-predict_steps)],order=c(2,0,3))
+arma_predict = predict(m9,predict_steps)
+par(mfcol=c(1,1))
+plot((T2-16):T2,VANKE.rtn[(T2-16):T2],type="l",ylim=c(-0.05,0.05),xlab="Time",ylab="log-return")
+lines((T2-predict_steps+1):T2,VANKE.rtn[(T2-predict_steps+1):T2],type="b")
+lines((T2-predict_steps):T2,c(VANKE.rtn[T2-predict_steps],arma_predict$pred),type="b",col="blue")
+lines((T2-predict_steps):T2,c(VANKE.rtn[T2-predict_steps],arma_predict$pred+2*arma_predict$se),lty=2, col="red",type="b")
+lines((T2-predict_steps):T2,c(VANKE.rtn[T2-predict_steps],arma_predict$pred-2*arma_predict$se),lty=2, col="green",type="b")
